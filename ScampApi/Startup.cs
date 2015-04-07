@@ -49,6 +49,7 @@ namespace ScampApi
             });
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<ILinkHelper, LinkHelper>();
+            
             services.AddScoped <ISecurityHelper, SecurityHelper>();
 
             services.AddSingleton <IWebJobController, WebJobController>();

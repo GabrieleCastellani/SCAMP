@@ -14,6 +14,7 @@ namespace KeyVaultRepositories.Implementation
         {
             KeyVaultScampClient kvsvc = new KeyVaultScampClient(configuration);
             services.AddInstance(kvsvc);
+            services.AddTransient<IKeyRepository, KeyRepository>();
 
         }
     }

@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Data.Services.Client;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
 using DocumentDbRepositories;
 using DocumentDbRepositories.Implementation;
+using KeyVaultRepositories.Implementation;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Framework.ConfigurationModel;
 using Microsoft.Framework.DependencyInjection;
 using Microsoft.Framework.DependencyInjection.Fallback;
 using Microsoft.WindowsAzure.Management.Compute.Models;
-using Microsoft.WindowsAzure.Management.Models;
 using ProvisioningLibrary;
 using ProvisioningLibrary5x;
 
@@ -28,8 +26,9 @@ namespace ProvisioningJobConsole
                  .AddEnvironmentVariables("APPSETTING_");
             var services = new ServiceCollection();
             services.AddDocumentDbRepositories(configuration);
+            services.AddKeyVaultRepositories(configuration);
             services.AddTransient<ResourceController>();
-
+            
             var serviceProvider = services.BuildServiceProvider();
 
 
@@ -37,7 +36,7 @@ namespace ProvisioningJobConsole
             // TODO - shouldn't be depending on ResourceController here
 
             var resourceController = serviceProvider.GetService<ResourceController>();
-
+            var keyVaultController = serviceProvider.GetService<IKeyRepository>();
             var docDbResource = await resourceController.GetResource(message.ResourceId);
             ScampSubscription subscription;
             string cloudServiceName, machineName;
@@ -141,9 +140,12 @@ namespace ProvisioningJobConsole
                 docDbResource.CloudServiceName = cloudServiceName;
                 docDbResource.State = "Created - Starting";
                 docDbResource.SubscriptionId = subscription.Id;
-                docDbResource.UserName = username;
-                docDbResource.UserPassword = password;
+                //docDbResource.UserName = username;
+                //docDbResource.UserPassword = password;
                 docDbResource.RdpPort = rdpPort.ToString();
+                keyVaultController.UpsertSecret(docDbResource.Id, "username", username);
+                keyVaultController.UpsertSecret(docDbResource.Id, "password", password);
+
                 await resourceController.UpdateResource(docDbResource);
             }
 

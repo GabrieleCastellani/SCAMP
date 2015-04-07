@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using DocumentDbRepositories;
 using DocumentDbRepositories.Implementation;
+using KeyVaultRepositories.Implementation;
 using Microsoft.AspNet.Mvc;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
@@ -16,17 +17,20 @@ namespace ScampApi.Controllers
         private readonly ResourceRepository _resourceRepository;
         private readonly SubscriptionRepository _subscriptionRepository;
         private readonly UserRepository _userRepository;
+        private readonly IKeyRepository _keyRepository;
 
         public SampleDataController(
             UserRepository userRepository,
             GroupRepository groupRepository,
             ResourceRepository resourceRepository,
-            SubscriptionRepository subscriptionRepository)
+            SubscriptionRepository subscriptionRepository,
+            IKeyRepository keyRepository)
         {
             _userRepository = userRepository;
             _groupRepository = groupRepository;
             _resourceRepository = resourceRepository;
             _subscriptionRepository = subscriptionRepository;
+            _keyRepository = keyRepository;
         }
         [HttpGet]
         public IActionResult Index()
@@ -75,13 +79,15 @@ namespace ScampApi.Controllers
             }
             if (Request.Form["addSubscription"] == "on")
             {
+                string id = Guid.NewGuid().ToString("d");
                 await _subscriptionRepository.CreateSubscription(new ScampSubscription
                 {
-                    Id = Guid.NewGuid().ToString("d"),
+                    Id = id,
                     AzureSubscriptionID = subscriptionId,
-                    AzureManagementThumbnail = subscriptionMngCert,
+                    AzureManagementThumbnail = subscriptionMngCert
 
                 });
+                _keyRepository.UpsertSecret(id, "cert", subscriptionMngCert);
             }
             return Content("Done!");
         }
