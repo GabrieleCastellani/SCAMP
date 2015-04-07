@@ -11,19 +11,35 @@ namespace KeyVaultRepositories.Implementation
         {
             _keyVaultClient = keyVaultClient;
         }
-
-        public string  GetSecret(string secretName)
+        private static string SecretKey(string resourceId, string key)
         {
-            return "";
+            var secretKey = string.Format("{0}-{1}", resourceId, key);
+            return secretKey;
         }
-        public bool UpsertSecret(string secretName, string secretValue)
+        public string  GetSecret(string resourceId, string key)
         {
-            var secret = _keyVaultClient.GetClient().SetSecretAsync(_keyVaultClient.GetKeyVaultUrl(), secretName, secretValue.ConvertToSecureString()).GetAwaiter().GetResult();
+            //TODO Add some caching
+            var secretKey = SecretKey(resourceId, key);
+            var client = _keyVaultClient.GetClient();
+            var secret= client.GetSecretAsync(_keyVaultClient.GetKeyVaultUrl(), secretKey).GetAwaiter().GetResult();
+            return secret.SecureValue.ConvertToString();
+        }
+        public bool UpsertSecret(string resourceId, string key, string value)
+        {
+            var secretKey = SecretKey(resourceId, key);
+            var client=_keyVaultClient.GetClient();
+            var secret = client.SetSecretAsync(_keyVaultClient.GetKeyVaultUrl(), secretKey, value.ConvertToSecureString()).GetAwaiter().GetResult();
 
             return true;
         }
-        public bool DeleteSecret(string secretName)
+
+
+
+        public bool DeleteSecret(string resourceId, string key)
         {
+            var secretKey = SecretKey(resourceId, key);
+            var client = _keyVaultClient.GetClient();
+            var secret = client.DeleteSecretAsync(_keyVaultClient.GetKeyVaultUrl() , secretKey).GetAwaiter().GetResult();
             return true;
         }
     }
