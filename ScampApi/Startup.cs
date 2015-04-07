@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using AutoMapper;
+using DocumentDbRepositories;
 using DocumentDbRepositories.Implementation;
 using KeyVaultRepositories.Implementation;
 using Microsoft.AspNet.Builder;
@@ -12,7 +14,9 @@ using Microsoft.Framework.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 using ScampApi.Infrastructure;
 using Microsoft.AspNet.StaticFiles;
-
+using ProvisioningLibrary;
+using ScampApi.ViewModels;
+using IConfiguration = Microsoft.Framework.ConfigurationModel.IConfiguration;
 
 
 namespace ScampApi
@@ -43,8 +47,11 @@ namespace ScampApi
                 //options.Filters.Add(new RequireHttpsAttribute());
 
             });
-
+            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<ILinkHelper, LinkHelper>();
+            services.AddScoped <ISecurityHelper, SecurityHelper>();
+
+            services.AddSingleton <IWebJobController, WebJobController>();
 
             services.AddInstance(Configuration);
 
@@ -71,6 +78,10 @@ namespace ScampApi
                     defaults: new { controller = "Home", action = "Index" });
                 
             });
+            //Configure AutoMapper
+            Mapper.CreateMap<ScampResource, ScampResourceSummary>();
+            Mapper.CreateMap<User, UserSummary>();
+            Mapper.CreateMap<User, ScampUserReference>();
         }
     }
 }

@@ -1,30 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using AutoMapper;
 using DocumentDbRepositories;
 using DocumentDbRepositories.Implementation;
 using Microsoft.AspNet.Mvc;
 using ScampApi.Infrastructure;
 using ScampApi.ViewModels;
+using Group = ScampApi.ViewModels.Group;
 
 namespace ScampApi.Controllers
 {
+    [Authorize]
     [Route("api/groups")]
     public class GroupsController : Controller
     {
-        private ILinkHelper _linkHelper;
+        private readonly ILinkHelper _linkHelper;
         private readonly GroupRepository _groupRepository;
+        private readonly UserRepository _userRepository;
+        private readonly ISecurityHelper _securityHelper;
 
-        public GroupsController(ILinkHelper linkHelper, GroupRepository groupRepository)
+        public GroupsController(ILinkHelper linkHelper, ISecurityHelper securityHelper,  GroupRepository groupRepository, UserRepository userRepository)
         {
             _linkHelper = linkHelper;
             _groupRepository = groupRepository;
+            _userRepository = userRepository;
+            _securityHelper = securityHelper;
         }
         [HttpGet(Name = "Groups.GetAll")]
         public async Task<IEnumerable<GroupSummary>> Get()
         {
-            var groups = await _groupRepository.GetGroups();
+            IEnumerable<ScampResourceGroup> groups;
+            //LINKED TO UI
+            if (await _securityHelper.IsSysAdmin())
+            {
+                 groups = await _groupRepository.GetGroups();
+            }
+            else
+            {
+                 groups = await _groupRepository.GetGroupsByUser( await _securityHelper.GetUserReference());
+            }
             return groups.Select(MapToSummary);
         }
 
@@ -36,10 +53,37 @@ namespace ScampApi.Controllers
         }
 
         [HttpPost]
-        public void Post([FromBody]Group group)
+        public async Task<GroupSummary> Post([FromBody]Group userInputGroup)
         {
-            // TODO implement adding a group
-            throw new NotImplementedException();
+            //Create a group
+            if (!await CanCreateGroup()) return null;
+            //Cleaning the object
+            var group = new ScampResourceGroup() 
+            {
+                Name = Regex.Replace(userInputGroup.Name.ToLowerInvariant(), "[^a-zA-Z0-9]", ""),
+                Id = Guid.NewGuid().ToString()
+                
+
+            };
+            var admin = await _securityHelper.GetUserReference();
+            group.Admins.Add(admin);
+            await _groupRepository.CreateGroup(group);
+            var resp = new GroupSummary()
+            {
+                GroupId = group.Id,
+                Name = group.Name 
+            };
+
+            return resp;
+
+        }
+
+        private async  Task<bool> CanCreateGroup()
+        {
+            if (await _securityHelper.IsSysAdmin()) return true;
+             
+            //TODO Who else can create a group? Do we need a flag on profile?
+            return true;
         }
 
         [HttpPut("{groupId}")]
@@ -73,8 +117,8 @@ namespace ScampApi.Controllers
                 GroupId = docDbGroup.Id,
                 Name = docDbGroup.Name,
                 Templates = new List<GroupTemplateSummary>(), // TODO map these when the repo supports them
-                Members = docDbGroup.Members?.Select(MapToSummary),
-                Admins= docDbGroup.Admins?.Select(MapToSummary),
+                Members = docDbGroup.Members?.Select(MapToSummary).ToList(),
+                Admins= docDbGroup.Admins?.Select(MapToSummary).ToList(), 
                 Resources = docDbGroup.Resources?.Select(MapToSummary)
             };  
         }
@@ -90,12 +134,12 @@ namespace ScampApi.Controllers
                 }
             };
         }
-        private GroupResourceSummary MapToSummary(ScampResource docDbResource)
+        private ScampResourceSummary MapToSummary(ScampResource docDbResource)
         {
-            return new GroupResourceSummary
+            return new ScampResourceSummary
             {
-                GroupId = docDbResource.ResourceGroup.Id,
-                ResourceId = docDbResource.Id,
+                ResourceGroup = new ScampResourceGroupReference() {Id= docDbResource.ResourceGroup.Id},
+                Id  = docDbResource.Id,
                 Name = docDbResource.Name,
                 Links =
                 {

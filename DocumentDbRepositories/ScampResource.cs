@@ -9,6 +9,10 @@ namespace DocumentDbRepositories
 {
     public class ScampResource
     {
+        public ScampResource()
+        {
+            Owners = new List<ScampUserReference>();
+        }
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
         [JsonProperty(PropertyName = "name")]

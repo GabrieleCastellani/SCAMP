@@ -1,39 +1,27 @@
 ﻿'use strict';
 angular.module('scamp')
-.factory('resourcesSvc', ['$http','$q', function ($http,$q) {
+.factory('resourcesSvc', ['$http', '$q', function ($http, $q) {
+
     return {
-        getItems: function () {
-            var promise = new Promise(
-
-    function (resolve, reject) {
-        //faking this for now
-
-        resolve([
-      { id: 1, name: "Resource1", state: "Stopped", groupName: "Group 1", remaining: 0.8 },
-      { id: 2, name: "Resource3", state: "Allocated", groupName: "Group 2", remaining: 0.5 }
-
-        ]);
-    });
-            return promise;
-
-              
-                      
-
-//            return $http.get('/api/resources');
+        getItems: function (groupId) {
+            return $http.get('api/groups/' + groupId + '/resources');
         },
         getItem : function(id){
             return $http.get('/api/resources/' + id);
         },
-        postItem : function(item){
-            return $http.post('/api/resources/', item);
+        postItem: function (groupId,item) {
+            return $http.post('api/groups/' + groupId + '/resources', item);
         },
-        putItem : function(item){
-            return $http.put('/api/resources/', item);
+        sendAction: function (groupId, resouceId, action) {
+            return $http.post('api/groups/' + groupId + '/resources/'+resouceId +"/"+action);
         },
-        deleteItem : function(id){
+        putItem : function(groupId,item){
+            return $http.put('api/groups/' + groupId + '/resources', item);
+        },
+        deleteItem: function (groupId, itemId) {
             return $http({
                 method: 'DELETE',
-                url: '/api/resources/' + id
+                url: 'api/groups/' + groupId + '/resources/' + itemId
             });
         }
     };

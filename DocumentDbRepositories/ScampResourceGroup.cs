@@ -12,6 +12,11 @@ namespace DocumentDbRepositories
     /// </summary>
     public class ScampResourceGroup
     {
+        public ScampResourceGroup()
+        {
+            Admins = new List<ScampUserReference>();
+            Members = new List<ScampUserReference>();
+        }
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
         [JsonProperty(PropertyName = "name")]

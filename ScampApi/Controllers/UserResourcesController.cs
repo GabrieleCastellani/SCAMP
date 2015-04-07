@@ -13,6 +13,8 @@ namespace ScampApi.Controllers.Controllers
     public class UserResourcesController : Controller
     {
 
+
+
         IWebJobController _webJobController;
 
         public UserResourcesController(IConfiguration config, IWebJobController webJobController)
@@ -23,7 +25,7 @@ namespace ScampApi.Controllers.Controllers
 
         // POST /api/user/resources/{resourceId}/{actionname}
         [HttpPost("{actionname}")]
-        public void Post(string resourceId, string actionname)
+        public void Post(string  resourceId, string actionname)
         {
             _webJobController.SubmitActionInQueue(resourceId, actionname);
         }
@@ -35,7 +37,6 @@ namespace ScampApi.Controllers.Controllers
             //return the RDP connection string
             return "rdpconnection 1";
         }
-
 
     }
 }

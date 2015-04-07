@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
@@ -47,12 +48,19 @@ namespace DocumentDbRepositories.Implementation
 
             return Task.FromResult(group);
         }
-
         public Task<IEnumerable<ScampResourceGroup>> GetGroups()
         {
-            var groups = from u in _client.CreateDocumentQuery<ScampResourceGroup>(_collection.SelfLink)
-                         where u.Type == "group"
-                         select u;
+            var groups =
+                _client.CreateDocumentQuery<ScampResourceGroup>(_collection.SelfLink)
+                    .Where(u => u.Type == "group");
+            var grouplist = groups.ToList();
+            return Task.FromResult((IEnumerable<ScampResourceGroup>)grouplist);
+        }
+        public Task<IEnumerable<ScampResourceGroup>> GetGroupsByUser(ScampUserReference user)
+        {
+            var groups =
+                _client.CreateDocumentQuery<ScampResourceGroup>(_collection.SelfLink)
+                    .Where(u => u.Type == "group" && (u.Admins[0].Id == user.Id || u.Members[0].Id == user.Id));
             var grouplist = groups.ToList();
             return Task.FromResult((IEnumerable<ScampResourceGroup>)grouplist);
         }
