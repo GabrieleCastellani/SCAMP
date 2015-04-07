@@ -21,8 +21,13 @@ namespace ProvisioningJobConsole
 
             var storageCstr = GetConnectionString();
 
-            var host = new JobHost(new JobHostConfiguration(storageCstr));
+            JobHostConfiguration config = new JobHostConfiguration(storageCstr);
+            config.Queues.BatchSize = 1; //Number of messages parallel processed in parallel. Will need some concurrency check before increasing.
+            config.Queues.MaxDequeueCount = 4;
+            config.Queues.MaxPollingInterval = TimeSpan.FromSeconds(15);
+            JobHost host = new JobHost(config);
 
+            
             // TEST Lines
             //IDictionary<string, string> settings = new Dictionary<string, string>();
             //settings.Add("Provisioning:StorageConnectionString", storageCstr);

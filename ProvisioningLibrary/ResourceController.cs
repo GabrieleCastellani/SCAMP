@@ -49,7 +49,7 @@ namespace ProvisioningLibrary5x
         public async Task<string> GetCloudServiceName(ScampResource scampResource)
         {
             var grp = await _groupRepository.GetGroupWithResources(scampResource.ResourceGroup.Id);
-            return Regex.Replace(grp.Name.ToLower(), "[^a-zA-Z0-9]", "");
+            return grp.Name.ToLower();
         }
 
         public string GetServiceLocation()
@@ -68,6 +68,11 @@ namespace ProvisioningLibrary5x
             await _resourceRepository.UpdateResource(resource);
             return true;
 
+        }
+
+        public async Task DeleteResource(ScampResource docDbResource)
+        {
+           await  _resourceRepository.DeleteResource(docDbResource.Id);
         }
     }
 }
