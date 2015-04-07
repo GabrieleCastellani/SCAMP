@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using DocumentDbRepositories.Implementation;
+using KeyVaultRepositories.Implementation;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
@@ -48,6 +49,7 @@ namespace ScampApi
             services.AddInstance(Configuration);
 
             services.AddDocumentDbRepositories(Configuration);
+            services.AddKeyVaultRepositories( Configuration);
         }
 
         // Configure is called after ConfigureServices is called.
