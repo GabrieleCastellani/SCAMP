@@ -1,0 +1,19 @@
+{
+    "version": "1.0.0-*",
+    "dependencies": {
+        "Microsoft.KeyVault.WebKey": "1.0.0-*"
+    },
+
+    "frameworks": {
+        "aspnet50": {
+            "dependencies": {
+                "Newtonsoft.Json": "6.0.8"
+            },
+            "frameworkAssemblies": {
+                "System.Runtime.Serialization": "4.0.0.0",
+                "System.Net.Http": "4.0.0.0"
+            }
+        }
+    },
+     "compilationOptions": { "allowUnsafe": true }
+}

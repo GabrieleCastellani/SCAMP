@@ -5,7 +5,8 @@
         "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta3",
         "WindowsAzure.Storage": "4.3.0",
         "Microsoft.Azure.WebJobs.Core": "1.0.1",
-        "ProvisioningLibrary": "1.0.0-*"
+        "ProvisioningLibrary": "1.0.0-*",
+        "KeyVaultRepositories": "1.0.0-*"
     },
     "commands": {
         "ProvisioningJobConsole": "run"
