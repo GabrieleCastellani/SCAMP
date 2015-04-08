@@ -73,6 +73,7 @@ The Key Vault cmdlets and scripts require Azure Resource Manager, so type the fo
 - Location parameter, use the command [Get-AzureLocation](https://msdn.microsoft.com/library/azure/dn654582.aspx). If you need more information, type: `Get-Help Get-AzureLocation`
 
 Applications that use a key vault must authenticate and has permission granted.
+
 1. Sign in to the Azure Management Portal.
 2. On the left, click **Active Directory**, and then select the directory you have used previously.
 3. On the Quick Start page, click **CONFIGURE**.
