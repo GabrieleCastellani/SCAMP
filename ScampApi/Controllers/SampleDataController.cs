@@ -84,7 +84,7 @@ namespace ScampApi.Controllers
                 {
                     Id = id,
                     AzureSubscriptionID = subscriptionId,
-                    AzureManagementThumbnail = subscriptionMngCert
+                    AzureManagementThumbnail = "OnKeyVault"
 
                 });
                 _keyRepository.UpsertSecret(id, "cert", subscriptionMngCert);

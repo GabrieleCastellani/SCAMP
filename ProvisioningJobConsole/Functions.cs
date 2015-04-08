@@ -34,9 +34,9 @@ namespace ProvisioningJobConsole
 
 
             // TODO - shouldn't be depending on ResourceController here
-
-            var resourceController = serviceProvider.GetService<ResourceController>();
             var keyVaultController = serviceProvider.GetService<IKeyRepository>();
+            var resourceController = serviceProvider.GetService<ResourceController>();
+            
             var docDbResource = await resourceController.GetResource(message.ResourceId);
             ScampSubscription subscription;
             string cloudServiceName, machineName;
@@ -140,10 +140,9 @@ namespace ProvisioningJobConsole
                 docDbResource.CloudServiceName = cloudServiceName;
                 docDbResource.State = "Created - Starting";
                 docDbResource.SubscriptionId = subscription.Id;
-                //docDbResource.UserName = username;
+                docDbResource.UserName = username;
                 //docDbResource.UserPassword = password;
                 docDbResource.RdpPort = rdpPort.ToString();
-                keyVaultController.UpsertSecret(docDbResource.Id, "username", username);
                 keyVaultController.UpsertSecret(docDbResource.Id, "password", password);
 
                 await resourceController.UpdateResource(docDbResource);
