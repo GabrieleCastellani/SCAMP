@@ -1,130 +1,182 @@
-﻿<div ng-init="populate()">
-    <p class="error">{{error}}</p>
-    <p>{{loadingMessage}}</p>
+﻿<script type="text/ng-template" id="ResourceOwners.html">
+	<div class="modal-header" style="border-style:none">
+		<h3 class="modal-title col-md-10">Users</h3>
+		<button class="btn btn-primary pull-right" ng-click="done()">Done</button>
+	</div>
+	<div class="modal-body">
+		<div class="col-lg-6">
+			<div class="widget">
+				<div class="widget-header">
+					<i class="fa fa-tasks"></i> All Users
+					<div class="input-group">
+						<input class="form-control" ng-model="searchUser.name">
+						<span class="input-group-addon glyphicon glyphicon-search"></span>
+					</div>
+				</div>
 
-<div class="row">
-    <div class="col-lg-8">
-        <div class="list-group">
-            <span class="list-group-addon">Group</span>
-            <select id='list-group-dropdown' ng-model="currentGroup" ng-options="item.name for item in groupList"
-                    ng-change="onchangeGroup()"></select>
-                 <a ng-click="addGroup()" style="cursor: pointer;"> <i class="fa fa-plus"></i> Add Group</a>
-        </div>
+				<div class="widget-body no-padding">
+					<ul class="list-group">
+						<li class="list-group-item" ng-click="selectUser(user)" ng-repeat="user in users | filter:searchUser">
+							{{user.name}}
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-6">
+			<div class="widget">
+				<div class="widget-header">
+					<i class="fa fa-tasks"></i> Selected
+				</div>
 
-        <div class="widget">
-            <div class="widget-header">
-                <i class="fa fa-tasks"></i> Resources <span class="pull-right">Manage</span>
-            </div>
-            <div class="widget-body no-padding">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th class="text-center">ID</th>
-                            <th>Action</th>
-                            <th>Name</th>
-                            <th>State</th>
-                            <th>Type</th>
-                            <th>Usage</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr data-ng-repeat="item in resourceList" style="cursor:pointer" ng-click="selectResource(item)" ng-class="{'active': item.id===currentResource.id}">
-                            <td class="text-center">{{item.id}}</td>
-                            <td>
-                                <div class="btn-group">
-                                    <a class="btn btn-small dropdown-toggle" data-toggle="dropdown" ref="#">
-                                        Action
-                                        <span class="caret"></span>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a ng-click="startResource(item)">Start</a></li>
-                                        <li><a ng-click="stopResource(item)">Stop</a></li>
-                                        <li><a ng-click="delete(item)" >Delete</a></li>
-                                    </ul>
-                                </div>
-                            </td>
-                            <td>{{item.name}}</td>
-                            <td>{{item.state}}</td>
-                            <td>{{item.resourceType}}</td>
-                            <td class="resource">
-                                <div class="progress">
-                                    <div class="progress-bar" role="progressbar" ng-style="{width: item.remaining}">
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    <br/>
-    <div class="col-lg-4">
-        <div class="widget">
-            <div class="widget-header" ng-click="createResource()" style="cursor:pointer">
-                <i class="fa fa-plus"></i> Add Resource (Debug Only)
-            </div>
-            <div class="widget-body padding" ng-show="currentResource || editingInProgress">
-                <form class="form-horizontal">
-                    <div class="input-group">
-                        <span class="input-group-addon">Name</span>
+				<div class="widget-body no-padding">
+					<ul class="list-group">
+						<li class="list-group-item" ng-click="removeUser(user)" ng-repeat="user in selected">
+							{{user.name}}
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer" style="border-style:none">
+	</div>
+</script>
 
-                        <span class="input-group-addon" data-ng-hide="editingInProgress">{{currentResource.name}}</span>
-                        <input data-ng-show="editingInProgress" class="form-control" type="text" data-ng-model="editInProgressResource.name"/>
+<div ng-init="populate()">
+	<p class="error">{{error}}</p>
+	<p>{{loadingMessage}}</p>
 
-                    </div>
-                    <!--<div class="input-group">
-                        <span class="input-group-addon">Owner</span>
-                        <span class="input-group-addon" data-ng-hide="editingInProgress">{{currentResource.owner}}</span>
-                        <input data-ng-show="editingInProgress" class="form-control" type="text" data-ng-model="editInProgressResource.owner" />
-                    </div>-->
-                    <div class="input-group">
-                        <span class="input-group-addon">State</span>
-                        <span class="input-group-addon"  data-ng-hide="editingInProgress">{{currentResource.state}}</span>
+	<div class="row">
+		<div class="col-lg-8">
+			<div class="list-group">
+				<span class="list-group-addon">Group</span>
+				<select id='list-group-dropdown' ng-model="currentGroup" ng-options="item.name for item in groupList"
+						ng-change="onchangeGroup()"></select>
+				<a ng-click="addGroup()" style="cursor: pointer;"> <i class="fa fa-plus"></i> Add Group</a>
+			</div>
 
-                        <!--<input data-ng-show="editingInProgress" class="form-control" type="text" data-ng-model="editInProgressResource.state"/>-->
-                    </div>
+			<div class="widget">
+				<div class="widget-header">
+					<i class="fa fa-tasks"></i> Resources <span class="pull-right">Manage</span>
+				</div>
+				<div class="widget-body no-padding">
+					<div class="table-responsive">
+						<table class="table">
+							<thead>
+								<tr>
+									<th class="text-center">ID</th>
+									<th>Action</th>
+									<th>Name</th>
+									<th>State</th>
+									<th>Type</th>
+									<th>Usage</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr data-ng-repeat="item in resourceList" style="cursor:pointer" ng-click="selectResource(item)" ng-class="{'active': item.id===currentResource.id}">
+									<td class="text-center">{{item.id}}</td>
+									<td>
+										<div class="btn-group">
+											<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" ref="#">
+												Action
+												<span class="caret"></span>
+											</a>
+											<ul class="dropdown-menu">
+												<li><a ng-click="startResource(item)">Start</a></li>
+												<li><a ng-click="stopResource(item)">Stop</a></li>
+												<li><a ng-click="delete(item)">Delete</a></li>
+											</ul>
+										</div>
+									</td>
+									<td>{{item.name}}</td>
+									<td>{{item.state}}</td>
+									<td>{{item.resourceType}}</td>
+									<td class="resource">
+										<div class="progress">
+											<div class="progress-bar" role="progressbar" ng-style="{width: item.remaining}">
+											</div>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<br />
+		<div class="col-lg-4">
+			<div class="widget">
+				<div class="widget-header" ng-click="createResource()" style="cursor:pointer">
+					<i class="fa fa-plus"></i> Add Resource (Debug Only)
+				</div>
+				<div class="widget-body padding" ng-show="currentResource || editingInProgress">
+					<form class="form-horizontal">
+						<div class="input-group">
+							<span class="input-group-addon">Name</span>
 
-                        <!--<div class="input-group">
-            <span class="input-group-addon">Group</span>
-            <select ng-init="groupDropDown = groups[0]" id='group-dropdown' ng-model="groupDropDown" ng-options="group as group.name for group in groups"
-                    ng-change="onchangeGroup()"></select>
+							<span class="input-group-addon" data-ng-hide="editingInProgress">{{currentResource.name}}</span>
+							<input data-ng-show="editingInProgress" class="form-control" type="text" data-ng-model="editInProgressResource.name" />
 
-            <select ng-model="choice" ng-options="x.id as x.name for x in array"></select>
-        </div>-->
-                    <div class="input-group">
-                        <span class="input-group-addon">Remaining</span>
-                        <span class="input-group-addon" data-ng-hide="editingInProgress">{{currentResource.remaining}}</span>
-                        <!--<input data-ng-show="editingInProgress" class="form-control" type="number" data-ng-model="editInProgressResource.remaining"/>-->
+						</div>
 
-                    </div>
+						<div data-ng-show="editingInProgress">
+							Owners
+							<button ng-click="manageOwners()">Edit</button>
+							<ul class="list-group">
+								<li class="list-group-item" ng-repeat="owner in editInProgressResource.owners">
+									{{owner.name}}
+								</li>
+							</ul>
+						</div>
 
-                    <div class="input-group">
-                        <span class="input-group-addon" data-ng-hide="editingInProgress">
-                            <a ng-click="startResource(currentResource)" class="btn btn-default" href="#" role="button">Start</a>
-                            <a ng-click="stopResource(currentResource)" class="btn btn-default" href="#" role="button">Stop</a>
-                            <a ng-click="delete(currentResource)" class="btn btn-default" href="#" role="button">Delete</a>
-                        </span>
+						<div class="input-group">
+							<span class="input-group-addon">State</span>
+							<span class="input-group-addon" data-ng-hide="editingInProgress">{{currentResource.state}}</span>
 
-                    </div>
-                    <div class="input-group">
-                            <!--<p data-ng-hide="editingInProgress || editingInProgress">
-                                <a data-ng-click="editSwitch(item)" href="javascript:;">Edit</a> |
-                                <a data-ng-click="delete(item.ID)" href="javascript:;">Delete</a>
-                            </p>-->
-                            <p data-ng-show="editingInProgress">
-                                <a data-ng-click="update()" href="javascript:;">Save</a> |
-                                <a data-ng-click="editSwitch(item)" href="javascript:;">Cancel</a>
-                            </p>
+							<!--<input data-ng-show="editingInProgress" class="form-control" type="text" data-ng-model="editInProgressResource.state"/>-->
+						</div>
+
+						<!--<div class="input-group">
+							<span class="input-group-addon">Group</span>
+							<select ng-init="groupDropDown = groups[0]" id='group-dropdown' ng-model="groupDropDown" ng-options="group as group.name for group in groups"
+									ng-change="onchangeGroup()"></select>
+
+							<select ng-model="choice" ng-options="x.id as x.name for x in array"></select>
+						</div>-->
+						<div class="input-group">
+							<span class="input-group-addon">Remaining</span>
+							<span class="input-group-addon" data-ng-hide="editingInProgress">{{currentResource.remaining}}</span>
+							<!--<input data-ng-show="editingInProgress" class="form-control" type="number" data-ng-model="editInProgressResource.remaining"/>-->
+
+						</div>
+
+						<div class="input-group">
+							<span class="input-group-addon" data-ng-hide="editingInProgress">
+								<a ng-click="startResource(currentResource)" class="btn btn-default" href="#" role="button">Start</a>
+								<a ng-click="stopResource(currentResource)" class="btn btn-default" href="#" role="button">Stop</a>
+								<a ng-click="delete(currentResource)" class="btn btn-default" href="#" role="button">Delete</a>
+							</span>
+
+						</div>
+
+						<div class="input-group">
+							<!--<p data-ng-hide="editingInProgress || editingInProgress">
+								<a data-ng-click="editSwitch(item)" href="javascript:;">Edit</a> |
+								<a data-ng-click="delete(item.ID)" href="javascript:;">Delete</a>
+							</p>-->
+							<p data-ng-show="editingInProgress">
+								<a data-ng-click="update()" href="javascript:;">Save</a> |
+								<a data-ng-click="editSwitch(item)" href="javascript:;">Cancel</a>
+							</p>
 
 
-                        </div>
-</form>
-            </div>
-        </div>
-    </div>
-</div>
-    
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
 </div>

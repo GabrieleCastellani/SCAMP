@@ -28,7 +28,11 @@ namespace ScampApi.ViewModels
         [JsonProperty(PropertyName = "remaining")]
         public int Remaining { get; set; }
 
-        public List<Link> Links { get; set; }
+		[JsonProperty(PropertyName = "owners")]
+		public List<UserSummary> Owners { get; set; }
+
+
+		public List<Link> Links { get; set; }
 
     }
 }

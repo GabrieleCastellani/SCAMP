@@ -91,18 +91,34 @@ namespace ScampApi.Controllers
             var checkPermission =await  CanCreateResource(groupId);
             if (!checkPermission) return null;
             var grpRef = new ScampResourceGroupReference() {Id = grp.Id};
-            var res = new ScampResource()
-            {
-                Id = Guid.NewGuid().ToString("d"),
-                ResourceGroup = grpRef,
-                Name = Regex.Replace(groupResource.Name.ToLowerInvariant(), "[^a-zA-Z0-9]", ""),
-                ResourceType = "Virtual Machine",
-                State = "Not provisioned - Need to be started"
-            };
+			var res = new ScampResource()
+			{
+				Id = Guid.NewGuid().ToString("d"),
+				ResourceGroup = grpRef,
+				Name = Regex.Replace(groupResource.Name.ToLowerInvariant(), "[^a-zA-Z0-9]", ""),
+				ResourceType = "Virtual Machine",
+				State = "Not provisioned - Need to be started",
+				Owners = (from u in groupResource.Owners
+						  select new ScampUserReference
+						  {
+							  Id = u.UserId,
+							  Name = u.Name
+						  }).ToList()
+			};
 
             await _resourceRepository.CreateResource(res);
-            return Mapper.Map<ScampResourceSummary>(res);
 
+			// update group members (all resource owners will be added as group member)
+			foreach (UserSummary owner in groupResource.Owners)
+			{
+				if (!grp.Members.Any(m => m.Id == owner.UserId))
+				{
+					grp.Members.Add(Mapper.Map<ScampUserReference>(owner));
+				}
+			}
+
+			await _groupRepository.UpdateGroup(groupId, grp);
+            return Mapper.Map<ScampResourceSummary>(res);
         }
 
         [HttpPut("{resourceId}")]

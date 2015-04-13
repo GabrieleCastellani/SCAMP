@@ -78,8 +78,12 @@ namespace ScampApi
             });
             //Configure AutoMapper
             Mapper.CreateMap<ScampResource, ScampResourceSummary>();
-            Mapper.CreateMap<User, UserSummary>();
-            Mapper.CreateMap<User, ScampUserReference>();
-        }
-    }
+			Mapper.CreateMap<User, UserSummary>();
+			Mapper.CreateMap<User, ScampUserReference>();
+			Mapper.CreateMap<ScampUserReference, UserSummary>()
+				.ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id));
+			Mapper.CreateMap<UserSummary, ScampUserReference>()
+				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.UserId));
+		}
+	}
 }
