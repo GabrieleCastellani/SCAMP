@@ -1,5 +1,5 @@
 ﻿'use strict';
-angular.module('scamp', ['ngRoute', 'AdalAngular', 'ui.bootstrap'])
+angular.module('scamp', ['ngRoute', 'AdalAngular', 'ui.bootstrap', 'infinite-scroll'])
 .config(['$routeProvider', '$httpProvider', 'adalAuthenticationServiceProvider', function ($routeProvider, $httpProvider, adalProvider) {
 
     $routeProvider.when("/Home", {

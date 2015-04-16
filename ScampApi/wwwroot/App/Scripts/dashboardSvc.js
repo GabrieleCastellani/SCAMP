@@ -1,10 +1,13 @@
 'use strict';
 angular.module('scamp')
 .factory('dashboardSvc', ['$http', function ($http) {
-    var apiPath = '/api/users';
+    var apiPath = '/api/users/';
     return {
         getItems: function () {
             return $http.get(apiPath);
+        },
+        getItemsPage: function (contToken) {
+        	return $http.get(apiPath + "next/" + contToken);
         },
         getItem: function (id) {
             return $http.get(apiPath + id);

@@ -84,6 +84,8 @@ namespace ScampApi
 				.ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id));
 			Mapper.CreateMap<UserSummary, ScampUserReference>()
 				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.UserId));
+			Mapper.CreateMap<ScampUser, UserSummary>()
+				.ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id));	
 		}
 	}
 }

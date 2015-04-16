@@ -192,11 +192,7 @@ angular.module('scamp')
 			$scope.editInProgressResource.owners = selectedItems;
 		});
 	};
-}]);
-
-
-
-angular.module('scamp')
+}])
 .controller('ResourceOwnersModalCtrl', function ($scope, $modalInstance, dashboardSvc, selected) {
 	dashboardSvc.getItems().success(function (data) {
 		$scope.users = data.filter(

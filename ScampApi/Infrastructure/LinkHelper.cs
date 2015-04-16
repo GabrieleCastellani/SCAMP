@@ -50,7 +50,12 @@ namespace ScampApi.Infrastructure
         {
             return FullyQualify(_urlHelper.RouteUrl("Users.GetAll"));
         }
-        public string User(string userId)
+
+		public string NextUsers(string continuationToken)
+		{
+			return FullyQualify(_urlHelper.RouteUrl("Users.Next", new { continuationToken }));
+		}
+		public string User(string userId)
         {
             return FullyQualify(_urlHelper.RouteUrl("Users.GetSingle", new {  userId }));
         }

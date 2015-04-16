@@ -9,6 +9,7 @@
         string GroupUser(string groupId, string userId);
         string CurrentUser();
         string Users();
+		string NextUsers(string continuationToken);
         string User(string userId);
         string GroupResourceUser(string groupId, string resourceId, string userId);
     }

@@ -1,13 +1,16 @@
 'use strict';
 angular.module('scamp')
-.controller('dashboardCtrl', ['$scope', '$modal', '$location', 'dashboardSvc', 'groupsSvc', 'adalAuthenticationService', function ($scope, $modal, $location, dashboardSvc, groupsSvc, adalService) {
+.controller('dashboardCtrl', ['$scope', '$modal', '$location', 'dashboardSvc', 'groupsSvc', 'usersPaginationSvc', 'adalAuthenticationService', function ($scope, $modal, $location, dashboardSvc, groupsSvc, usersPaginationSvc, adalService) {
 	$scope.currentRouteName = 'Dashboard';
-	$scope.userList = null;
+	$scope.userList = [];
 
 	$scope.populate = function () {
-		console.log(dashboardSvc);
-		dashboardSvc.getItems().success(function (results) {
-			$scope.userList = results;
+		//console.log(dashboardSvc);
+		//dashboardSvc.getItems().success(function (results) {
+		//	$scope.userList = results;
+		//	$scope.loadingMessage = "";
+		dashboardSvc.getItemsPage('').success(function (results) {
+			$scope.userList = results.item1;
 			$scope.loadingMessage = "";
 		}).error(function (err) {
 			$scope.error = err;
@@ -41,10 +44,38 @@ angular.module('scamp')
 			}
 		});
 	};
-}]);
 
+	//$scope.userSvc = usersPaginationSvc;
+	//$scope.userSvc.nextPage.success(function (results) {
+	//	$scope.userList.concat(results.item1);
+	//	$scope.userSvc.continuationToken = results.item2;
+	//})
 
-angular.module('scamp')
+	$scope.usersNextPage = function () {
+		if (usersPaginationSvc.finish)
+			return;
+
+		usersPaginationSvc.nextPage(usersPaginationSvc.continuationToken).success(function (results) {
+			if (!$scope.userList) // first time
+				$scope.userList = results.item1;
+			else
+				$scope.userList = $scope.userList.concat(results.item1);
+
+			if (results.item2 == null) { // all users loaded
+				usersPaginationSvc.finish = true;
+				usersPaginationSvc.continuationToken = results.item2;
+			}
+			else {
+				usersPaginationSvc.finish = false;
+				usersPaginationSvc.continuationToken = results.item2;
+			}
+
+			$scope.allUsersLoaded = usersPaginationSvc.finish;
+		});
+		
+	}
+	$scope.allUsersLoaded = usersPaginationSvc.finish;
+}])
 .controller('GroupUsersModalCtrl', function ($scope, $modalInstance, groupSvc, group, users) {
 
 	$scope.admins = group.data.admins;
@@ -54,7 +85,6 @@ angular.module('scamp')
 
 	// TODO: load only if it's necessary
 	$scope.users = users;
-
 	$scope.done = function () {
 		$modalInstance.dismiss('done');
 	};
