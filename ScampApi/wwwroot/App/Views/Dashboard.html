@@ -1,29 +1,121 @@
+<script type="text/ng-template" id="GroupUsers.html">
+	<div class="modal-header" style="border-style:none">
+		<h3 class="modal-title col-md-10">{{group.name}}</h3>
+		<button class="btn btn-primary pull-right" ng-click="done()">Done</button>
+	</div>
+	<div class="modal-body pull-left">
+		<div class="col-lg-12">
+			<div class="widget">
+				<div class="widget-header">
+					<span class="col-md-3 text-right">Search: </span>
+					<div class="input-group col-md-6">
+						<input class="form-control" ng-model="searchUser.name">
+						<span class="glyphicon glyphicon-search input-group-addon"></span>
+					</div>
+				</div>
+				<div class="widget-body no-padding">
+					<div class="table-responsive">
+						<table class="table">
+							<thead>
+								<tr>
+									<th class="text-center">ID</th>
+									<th>Name</th>
+									<th>Role</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="user in group.admins | filter:searchUser">
+									<td class="text-center">{{user.userId}}</td>
+									<td>{{user.name}}</td>
+									<td>Admin</td>
+									<td>
+										<button class="btn btn-default btn-danger" ng-click="removeAdmin(user)"  ng-show="currentUser.isSystemAdmin || isGroupAdmin">Remove Admin</button>
+									</td>
+								</tr>
+								<!--<tr ng-repeat="user in members | filter:searchUser">
+									<td class="text-center">{{user.userId}}</td>
+									<td>{{user.name}}</td>
+									<td>Member</td>
+									<td></td>
+								</tr>-->
+								<tr ng-repeat="user in users | filter:searchUser | notAdmin:group.admins" ng-show="currentUser.isSystemAdmin || isGroupAdmin">
+									<td class="text-center">{{user.userId}}</td>
+									<td>{{user.name}}</td>
+									<td></td>
+									<td>
+										<button class="btn btn-default btn-success" ng-click="addAdmin(user)">Add as Admin</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer" style="border-style:none">
+	</div>
+</script>
+
 <div id="dashboard" ng-init="populate()">
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="widget">
-                <div class="widget-header">
-                    <i class="fa fa-tasks"></i> Users <span class="pull-right">Manage</span>
-                </div>
-                <div class="widget-body no-padding">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">ID</th>
-                                    <th>Name</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr data-ng-repeat="item in userList">
-                                    <td class="text-center">{{item.id}}</td>
-                                    <td>{{item.name}}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="row">
+
+		<div class="col-lg-7">
+			<div class="widget">
+				<div class="widget-header">
+					<i class="fa fa-tasks"></i> Your Groups <span class="pull-right">Manage</span>
+				</div>
+				<div class="widget-body no-padding">
+					<div class="table-responsive">
+						<table class="table">
+							<thead>
+								<tr>
+									<th class="text-center">ID</th>
+									<th>Name</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr data-ng-repeat="group in groupList">
+									<td class="text-center">{{group.groupId}}</td>
+									<td>{{group.name}}</td>
+									<td>
+										<button class="btn btn-default" ng-click="manageGroup(group.groupId)">Manage</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="col-lg-5">
+			<div class="widget">
+				<div class="widget-header">
+					<i class="fa fa-tasks"></i> Users <span class="pull-right">Manage</span>
+				</div>
+				<div class="widget-body no-padding">
+					<div class="table-responsive">
+						<table class="table">
+							<thead>
+								<tr>
+									<th class="text-center">ID</th>
+									<th>Name</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr data-ng-repeat="item in userList">
+									<td class="text-center">{{item.userId}}</td>
+									<td>{{item.name}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

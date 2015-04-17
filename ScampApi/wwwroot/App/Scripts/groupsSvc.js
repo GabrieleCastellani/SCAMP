@@ -13,8 +13,8 @@ angular.module('scamp')
         postItem: function (item) {
             return $http.post(apiPath, item);
         },
-        putItem: function (item) {
-            return $http.put(apiPath, item);
+        putItem: function (id, item) {
+            return $http.put(apiPath + id, item);
         },
         deleteItem: function (id) {
             return $http({

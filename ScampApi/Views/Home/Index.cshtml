@@ -1,10 +1,11 @@
 ﻿@model  ScampApi.ViewModels.ScampSettings
 
 @{
-    var serSettings = new Newtonsoft.Json.JsonSerializerSettings {
-        ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
-    };
-    var settingsJson = Newtonsoft.Json.JsonConvert.SerializeObject(Model, serSettings);
+	var serSettings = new Newtonsoft.Json.JsonSerializerSettings
+	{
+		ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
+	};
+	var settingsJson = Newtonsoft.Json.JsonConvert.SerializeObject(Model, serSettings);
 }
 
 @section  head{
@@ -12,43 +13,44 @@
 }
 
 <div ng-app="scamp" ng-controller="homeCtrl" role="document">
-    <div id="page-wrapper" class="open">
-        <div id="sidebar-wrapper" ng-if="isLoggedOn" ng-include="'/App/Views/Sidebar.html'">
-            <!--sidebar-->
-        </div>
-        <div class="content-wrapper" role="main">
-            <div class="row header"  ng-include="'/App/Views/Header.html'">
-                <!--header-->
-            </div>
-            <div ng-view class="page-content">
-                <!--page content-->
-            </div>
-        </div>
+	<div id="page-wrapper" class="open">
+		<div id="sidebar-wrapper" ng-if="isLoggedOn" ng-include="'/App/Views/Sidebar.html'">
+			<!--sidebar-->
+		</div>
+		<div class="content-wrapper" role="main">
+			<div class="row header" ng-include="'/App/Views/Header.html'">
+				<!--header-->
+			</div>
+			<div ng-view class="page-content">
+				<!--page content-->
+			</div>
+		</div>
 
-    </div>
+	</div>
 </div>
 @section scripts{
 
-    <script>
-        var scampConfig = scampConfig || {};
-        scampConfig.settings = @Html.Raw(settingsJson);
-    </script>
+	<script>
+		var scampConfig = scampConfig || {};
+		scampConfig.settings = @Html.Raw(settingsJson);
+	</script>
 
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
-    <script src="https://code.angularjs.org/1.2.25/angular-route.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-    <script src="https://secure.aadcdn.microsoftonline-p.com/lib/1.0.0/js/adal.js"></script>
-    <script src="https://secure.aadcdn.microsoftonline-p.com/lib/1.0.0/js/adal-angular.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
+	<script src="https://code.angularjs.org/1.2.25/angular-route.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	<script src="https://secure.aadcdn.microsoftonline-p.com/lib/1.0.0/js/adal.js"></script>
+	<script src="https://secure.aadcdn.microsoftonline-p.com/lib/1.0.0/js/adal-angular.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.1/ui-bootstrap-tpls.js"></script>
 
-    <script src="~/app/scripts/app.js"></script>
-    <script src="~/app/scripts/homectrl.js"></script>
-    <script src="~/app/scripts/homeSvc.js"></script>
-    <script src="~/app/scripts/userdatactrl.js"></script>
-    <script src="~/app/scripts/resourcesctrl.js"></script>
-    <script src="~/app/scripts/resourcessvc.js"></script>
-    <script src="~/app/scripts/dashboardctrl.js"></script>
-    <script src="~/app/scripts/dashboardsvc.js"></script>
-    <script src="~/app/scripts/groupsSvc.js"></script>
+	<script src="~/app/scripts/app.js"></script>
+	<script src="~/app/scripts/homectrl.js"></script>
+	<script src="~/app/scripts/homeSvc.js"></script>
+	<script src="~/app/scripts/userdatactrl.js"></script>
+	<script src="~/app/scripts/resourcesctrl.js"></script>
+	<script src="~/app/scripts/resourcessvc.js"></script>
+	<script src="~/app/scripts/dashboardctrl.js"></script>
+	<script src="~/app/scripts/dashboardsvc.js"></script>
+	<script src="~/app/scripts/groupsSvc.js"></script>
 }

@@ -26,10 +26,19 @@ namespace DocumentDbRepositories.Implementation
 			var created = await _client.CreateDocumentAsync(_collection.SelfLink, newUser);
 		}
 
+		public Task<IEnumerable<ScampUser>> GetUsers()
+		{
+			var users = from u in _client.CreateDocumentQuery<ScampUser>(_collection.SelfLink)
+						where u.Type == "user"
+						select u;
+
+			return Task.FromResult((IEnumerable<ScampUser>) users.ToList());
+		}
+
 		public Task<ScampUser> GetUser(string userId)
         {
             var users = from u in _client.CreateDocumentQuery<ScampUser>(_collection.SelfLink)
-                        where u.Id == userId
+                        where u.Id == userId && u.Type == "user"
                         select u;
             var userList = users.ToList();
             if (userList.Count == 0)

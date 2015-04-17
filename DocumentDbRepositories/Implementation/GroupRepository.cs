@@ -76,15 +76,19 @@ namespace DocumentDbRepositories.Implementation
             throw new NotImplementedException();
         }
 
-        public Task AddMember(string groupID)
+        public Task UpdateGroup(string groupID, ScampResourceGroup group)
         {
-            //TODO: stuff
-            throw new NotImplementedException();
+			// TODO: Security
+			Document document = _client.CreateDocumentQuery(_collection.SelfLink)
+				.Where(d => d.Id == groupID)
+				.AsEnumerable()
+				.FirstOrDefault();
+			return _client.ReplaceDocumentAsync(document.SelfLink, group);
         }
         public Task AddAdmin(string groupID)
         {
             //TODO: stuff
             throw new NotImplementedException();
         }
-    }
+	}
 }

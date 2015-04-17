@@ -4,6 +4,9 @@ using System.Linq;
 using Microsoft.AspNet.Mvc;
 using ScampApi.Infrastructure;
 using ScampApi.ViewModels;
+using DocumentDbRepositories.Implementation;
+using DocumentDbRepositories;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,30 +16,36 @@ namespace ScampApi.Controllers.Controllers
     public class UsersController : Controller
     {
         private ILinkHelper _linkHelper;
+		private UserRepository _userRepository;
 
-        public UsersController(ILinkHelper linkHelper)
+        public UsersController(ILinkHelper linkHelper, UserRepository userRepository)
         {
             _linkHelper = linkHelper;
+			_userRepository = userRepository;
         }
         [HttpGet(Name = "Users.GetAll")]
-        public IEnumerable<UserSummary> Get()
+        public async Task<IEnumerable<UserSummary>> Get()
         {
-            return new[] {
-                new UserSummary {
-                    UserId ="1",
-                    Name = "User1",
-                    Links = {
-                         new Link {Rel="user", Href= _linkHelper.User("1") }
-                    }
-                },
-                 new UserSummary {
-                    UserId ="2",
-                    Name = "User2",
-                    Links = {
-                         new Link {Rel="user", Href= _linkHelper.User("2") }
-                    }
-                }
-            };
+			//LINKED TO UI
+			return from u in await _userRepository.GetUsers()
+			select map(u);
+
+            //return new[] {
+            //    new UserSummary {
+            //        UserId ="1",
+            //        Name = "User1",
+            //        Links = {
+            //             new Link {Rel="user", Href= _linkHelper.User("1") }
+            //        }
+            //    },
+            //     new UserSummary {
+            //        UserId ="2",
+            //        Name = "User2",
+            //        Links = {
+            //             new Link {Rel="user", Href= _linkHelper.User("2") }
+            //        }
+            //    }
+            //};
         }
 
         [HttpGet("{userId}", Name = "Users.GetSingle")]
@@ -73,5 +82,14 @@ namespace ScampApi.Controllers.Controllers
         {
             throw new NotImplementedException();
         }
-    }
+
+		private UserSummary map(ScampUser docDbUSer)
+		{
+			return new UserSummary
+			{
+				UserId = docDbUSer.Id,
+				Name = docDbUSer.Name
+			};
+		}
+	}
 }

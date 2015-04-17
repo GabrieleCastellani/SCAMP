@@ -88,7 +88,7 @@ angular.module('scamp')
             $scope.resourceList = results.data;
             $scope.loadingMessage = "";
             // TODO CHECK: Without this the first time grid is not updated.
-            $scope.$apply();
+            //$scope.$apply();
 
             },
         function (err) {
