@@ -13,7 +13,7 @@ angular.module('scamp')
 
 	$scope.editInProgressResource = {
 		name: "",
-		owners: "",
+		owners: [],
 		isNew: false
 	};
 
@@ -58,7 +58,7 @@ angular.module('scamp')
 		$scope.editSwitch($scope.editInProgressResource, true);
 		$scope.editInProgressResource = {
 			name: "",
-			owners: "",
+			owners: [],
 			isNew: true
 		};
 	}
@@ -174,8 +174,6 @@ angular.module('scamp')
         });
 	};
 
-	$scope.selectedUsers = [];
-
 	$scope.manageOwners = function () {
 		var modalInstance = $modal.open({
 			templateUrl: 'ResourceOwners.html',
@@ -183,7 +181,7 @@ angular.module('scamp')
 			size: 'lg',
 			resolve: {
 				selected: function () {
-					return $scope.selectedUsers;
+					return $scope.editInProgressResource.owners;
 				}
 			}
 		});
