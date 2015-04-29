@@ -4,13 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Azure.Documents;
 
 namespace DocumentDbRepositories
 {
-    public class ScampUser
+    public class ScampUser : Resource
     {
-        [JsonProperty(PropertyName = "id")]
-        public string Id { get; set; }
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
@@ -20,12 +19,10 @@ namespace DocumentDbRepositories
         [JsonProperty(PropertyName = "email")]
         public string email { get; set; }
 
-        [JsonProperty(PropertyName = "IPKey")]
-        public string IPKey { get; set; }
-
-        [JsonProperty(PropertyName = "IsSystemAdmin")]
-        public bool IsSystemAdmin { get; set; }
+        [JsonProperty(PropertyName = "isSystemAdmin")]
+        public bool isSystemAdmin { get; set; }
     }
+
     public class ScampUserReference
     {
         [JsonProperty(PropertyName = "id")]

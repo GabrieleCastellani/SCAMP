@@ -1,0 +1,53 @@
+﻿<h2>
+    <div ng-show="$scope.DoingAdd">Add New Subscription</div>
+    <div ng-hide="$scope.DoingAdd">Edit Subscription</div>
+</h2>
+
+
+<form id="editSubscription">
+    <fieldset id="fsGeneral">
+        <h4>General Information</h4>
+        <label for="subName">Event Name:</label><br/>
+        <input id="subName" type="text" ng-model="subDetails.subname" placeholder="description name for this subscription" /><br />
+        <label for="subId">Azure Subscription ID:</label><br />
+        <input id="subId" type="text" placeholder="subscription identifier" /><br />
+        <label for="subAdmin">SCAMP Subscripton Administrator:</label><br />
+        <input id="subAdmin" type="text" placeholder="" /><br />
+        <label for="subAdminPass">Administrator Password:</label><br />
+        <input id="subAdminPass" type="password" placeholder="" /><br />
+    </fieldset>
+    <hr />
+    <fieldset id="fsRegions" ng-init="getAvailableRegions()">
+        <h4>Allowed Regions for deployment</h4>
+        Some Azure costs can vary by region. Please specify which regions this subscription can deploy resources too.
+        <ul>
+            <li ng-repeat="region in regionList">
+                <input type="checkbox" ng-checked="region.checked"> {{region.Name}}
+            </li>
+        </ul>
+    </fieldset>
+    <hr />
+    <fieldset id="fsVirtualMachines" ng-init="getGalleryImages()">
+        <h4>Allow Virtual Machines</h4>
+        Some gallery images will incur additional changes that are billable to an Enterprise Agreement and could result in additional 
+        changes. Please indicated if you wish to use Azure Virtual Machines and if so, which standard images you'd like to make available 
+        to this subscription.<br />
+        <input type="checkbox" ng-model="subDetails.allowVMs"> Enable Virtual Machines on this subscription
+        <ul ng-show="subDetails.allowVMs">
+            <li ng-repeat="image in imageList">
+                <input type="checkbox" ng-checked="image.checked"> {{image.Name}}
+            </li>
+        </ul>
+    </fieldset>
+    <hr />
+    <fieldset id="fsWebApps">
+        <h4>Allow Azure Web Apps</h4>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis auctor tincidunt dictum. Mauris sed lacus pellentesque, 
+        tempus quam in, semper lectus. Nulla venenatis tempus mi, ut imperdiet mi rhoncus et. Sed pellentesque condimentum 
+        turpis in faucibus. <br />
+        <input type="checkbox" ng-model="subDetails.allowWebApps"> Enable Web Apps on this subscription
+    </fieldset>
+    </br>
+    <button type="submit" class="btn btn-primary" ng-click="saveSubscription(subDetails)">Save</button>
+    <button type="submit" class="btn btn-default" ng-click="cancelSave()">Cancel</button>
+</form>

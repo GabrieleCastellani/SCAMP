@@ -14,7 +14,7 @@
 
 <div ng-app="scamp" ng-controller="homeCtrl" role="document">
 	<div id="page-wrapper" class="open">
-		<div id="sidebar-wrapper" ng-if="isLoggedOn" ng-include="'/App/Views/Sidebar.html'">
+        <div id="sidebar-wrapper" ng-show="isLoggedOn" ng-include="'/App/Views/Sidebar.html'">
 			<!--sidebar-->
 		</div>
 		<div class="content-wrapper" role="main">
@@ -54,5 +54,17 @@
 	<script src="~/app/scripts/dashboardctrl.js"></script>
 	<script src="~/app/scripts/dashboardsvc.js"></script>
 	<script src="~/app/scripts/groupsSvc.js"></script>
+    <script src="~/app/scripts/settingsAdminsCtrl.js"></script>
+    <script src="~/app/scripts/settingsSubsCtrl.js"></script>
+    <script src="~/app/scripts/settingsSubsSvc.js"></script>
+    <script src="~/app/scripts/settingsSubDetailsCtrl.js"></script>
+    <script src="~/app/scripts/settingsSubDetailsSvc.js"></script>
+    <script src="~/app/scripts/settingsSubSetupCtrl.js"></script>
+    <script src="~/app/scripts/settingsSubSetupSvc.js"></script>
+    <script src="~/app/scripts/settingsLogsCtrl.js"></script>
+    <script src="~/app/scripts/settingsLogsSvc.js"></script>
+    <script src="~/app/scripts/settingsLogsCtrl.js"></script>
+    <script src="~/app/scripts/settingsLogsSvc.js"></script>
+    <script src="~/app/Services/systemSettingsSvc.js"></script>
 	<script src="~/app/scripts/usersPaginationSvc.js"></script>
 }

@@ -1,0 +1,23 @@
+﻿<div>Azure Subscription Configuration</div>
+
+<div id="subscriptions" ng-init="getSubscriptions()">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="widget">
+                <div class="widget-header">
+                    <i class="fa fa-tasks"></i> Subscriptions <span class="pull-right"><a href="#/settings/subs/edit/">Add New</a></span>
+                </div>
+                <div data-ng-repeat="sub in subscriptionList">
+                    <a href="#/settings/subs/{{sub.subId}}">
+                        <div class="row">
+                            <div>{{sub.subname}}</div>
+                            <div>{{sub.subId}}</div>
+                            <div>{{sub.subAdmin}}</div>
+                            <div>{{sub.subLastChgd}}</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

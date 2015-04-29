@@ -40,6 +40,9 @@ angular.module('scamp')
 				},
 				users: function () {
 					return $scope.userList;
+				},
+				currentUser: function () {
+					return $scope.userProfile;
 				}
 			}
 		});
@@ -72,16 +75,17 @@ angular.module('scamp')
 
 			$scope.allUsersLoaded = usersPaginationSvc.finish;
 		});
-		
+
 	}
 	$scope.allUsersLoaded = usersPaginationSvc.finish;
 }])
-.controller('GroupUsersModalCtrl', function ($scope, $modalInstance, groupSvc, group, users) {
+.controller('GroupUsersModalCtrl', function ($scope, $modalInstance, groupSvc, group, users, currentUser) {
 
-	$scope.admins = group.data.admins;
-	$scope.members = group.data.members;
-	$scope.groupName = group.data.name;
-	$scope.groupId = group.data.groupId;
+	$scope.group = group.data;
+
+	$scope.isGroupAdmin = userInArray(currentUser.id, $scope.group.admins);
+
+	$scope.currentUser = currentUser;
 
 	// TODO: load only if it's necessary
 	$scope.users = users;
@@ -90,9 +94,41 @@ angular.module('scamp')
 	};
 
 	$scope.addAdmin = function (user) {
-		var newGroup = group.data;
+		var newGroup = JSON.parse(JSON.stringify($scope.group)); // clone group
+
 		newGroup.admins.push(user);
-		groupSvc.putItem(newGroup.groupId, newGroup);
+		groupSvc.putItem(newGroup.groupId, newGroup).success(function (result) {
+			if (!result) { // error
+				alert("An error occured");
+			}
+			else {
+				$scope.group = result;
+
+				if (user.userId == currentUser.id) // current user adds him-self 
+					$scope.isGroupAdmin = true;
+			}
+		});
+	};
+
+	$scope.removeAdmin = function (user) {
+		var newGroup = JSON.parse(JSON.stringify($scope.group)); // clone group
+
+		var index = $scope.group.admins.indexOf(user);
+		if (index > -1) {
+			newGroup.admins.splice(index, 1);
+		}
+
+		groupSvc.putItem(newGroup.groupId, newGroup).success(function (result) {
+			if (!result) { // error
+				alert("An error occured");
+			}
+			else {
+				$scope.group = result;
+
+				if (user.userId == currentUser.id) // current user removes him-self 
+					$scope.isGroupAdmin = false;
+			}
+		});
 	};
 })
 .filter('notAdmin', function () {

@@ -36,7 +36,7 @@ namespace DocumentDbRepositories.Implementation
                              where g.Id == groupID && g.Type == "group"
                              select g;
             var group = groupQuery.ToList().FirstOrDefault();
-            
+
             if (group == null)
                 return Task.FromResult((ScampResourceGroupWithResources)null);
 
@@ -58,11 +58,30 @@ namespace DocumentDbRepositories.Implementation
         }
         public Task<IEnumerable<ScampResourceGroup>> GetGroupsByUser(ScampUserReference user)
         {
-            var groups =
-                _client.CreateDocumentQuery<ScampResourceGroup>(_collection.SelfLink)
-                    .Where(u => u.Type == "group" && (u.Admins[0].Id == user.Id || u.Members[0].Id == user.Id));
-            var grouplist = groups.ToList();
-            return Task.FromResult((IEnumerable<ScampResourceGroup>)grouplist);
+            // Want to be able to write this in LINQ (but get a runtime exception):
+            //var groups =
+            //    (from grp in _client.CreateDocumentQuery<ScampResourceGroup>(_collection.SelfLink)
+            //    where grp.Type == "group"
+            //    from admin in grp.Admins
+            //    where admin.Id == user.Id
+            //    select grp)
+            //    .ToList();
+            var groups = _client.CreateDocumentQuery<ScampResourceGroup>(
+                _collection.SelfLink,
+                new SqlQuerySpec
+                {
+                    QueryText = " SELECT VALUE g" +
+                                " FROM groups g " +
+                                " JOIN admin in g.admins" +
+                                " WHERE g.type = 'group'" +
+                                " AND admin.id = @adminId",
+                    Parameters = new SqlParameterCollection
+                    {
+                       new SqlParameter { Name = "@adminId", Value = user.Id }
+                    }
+                }
+            );
+            return Task.FromResult((IEnumerable<ScampResourceGroup>)groups);
         }
 
         public async Task CreateGroup(ScampResourceGroup newGroup)

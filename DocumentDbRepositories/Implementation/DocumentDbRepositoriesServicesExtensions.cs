@@ -27,6 +27,7 @@ namespace DocumentDbRepositories.Implementation
             services.AddTransient<ResourceRepository>();
             services.AddTransient<SubscriptionRepository>();
             services.AddTransient<UserRepository>();
+            services.AddTransient<SystemSettingsRepository>();
         }
 
         // TODO think about whether there are alternative ways to deal with the mis-match between async initialization and the sync services pipeline

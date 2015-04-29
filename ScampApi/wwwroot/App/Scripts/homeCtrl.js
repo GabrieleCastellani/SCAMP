@@ -26,6 +26,7 @@ angular.module('scamp')
             $scope.loadingMessage = "";
             console.log($scope.userProfile);
             $location.path("/dashboard");
+            //$window.location.href.path("/dashboard");
         }).error(function (err) {
             console.log("get failed");
             $scope.error = err;

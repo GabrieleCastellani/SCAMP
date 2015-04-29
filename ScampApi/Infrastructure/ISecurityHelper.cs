@@ -7,7 +7,7 @@ namespace ScampApi.Infrastructure
     {
         string GetIPIDByContext();
         Task<ScampUser> GetUser();
-        Task<ScampUser> GetUserByIPID(string IPID);
+        Task<ScampUser> GetUserById(string IPID);
         Task<ScampUserReference> GetUserReference();
         Task<bool> IsGroupAdmin(string groupId);
         Task<bool> IsSysAdmin();

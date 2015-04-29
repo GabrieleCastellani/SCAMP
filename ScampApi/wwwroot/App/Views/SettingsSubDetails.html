@@ -1,0 +1,28 @@
+﻿<div>Azure Subscription Configuration</div>
+
+<div id="subdetails">
+    <div class="row">
+        <div>{{subDetails.subname}}</div>
+        <div>{{subDetails.subID}}</div>
+        <div>{{subDetails.subAdmin}}</div>
+        <div>{{subDetails.subLastChgd}}</div>
+    </div>
+    <hr />
+    <h4>Subscription Limits</h4>
+    <div data-ng-repeat="svc in subDetails.svcLimits">
+        <div class="row">
+            {{svc.type}} (use icon?) Current Usage: {{svc.current}} of {{svc.maximum}}</br>
+            <div ng-if="svc.msg && svc.msg!=''">
+                &nbsp;&nbsp;&nbsp;&nbsp;{{svc.msg}}
+            </div>
+        </div>
+    </div>
+    <hr />
+    <h4>Events</h4>
+    <div data-ng-repeat="event in subDetails.events">
+        <div class="row">
+            {{event.level}} at {{event.timestamp}} by {{event.performedBy}}</br>
+            &nbsp;&nbsp;&nbsp;&nbsp;{{event.description}}
+        </div>
+    </div>    
+</div>

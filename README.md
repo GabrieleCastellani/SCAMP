@@ -31,8 +31,56 @@ From your shell or command line:
 ### Step 3:  Configure the Scamp Web App to use your Azure Active Directory tenant
 TODO
 
+### Step 4: Create a KeyVault repository
+For this step you will need Azure PowerShell version 0.8.13 or later.
+You can also read the following tutorials to get familiar with Azure Resource Manager in Windows PowerShell:
 
-### Step 4:  Enable the OAuth2 implicit grant for your application
+- [How to install and configure Azure PowerShell](powershell-install-configure.md)
+- [Using Windows PowerShell with Resource Manager](powershell-azure-resource-manager.md)
+
+Start an Azure PowerShell session and sign in to your Azure account with the following command:  
+
+    Add-AzureAccount
+
+In the pop-up browser window, enter your Azure account user name and password. Windows PowerShell will get all the subscriptions that are associated with this account and by default, uses the first one.
+
+If you have multiple subscriptions and want to specify a specific one to use for Azure Key Vault, type the following to see the subscriptions for your account:
+
+    Get-AzureSubscription
+
+Then, to specify the subscription to use, type:
+
+    Select-AzureSubscription -SubscriptionName <subscription name>
+
+If you haven't already done so, [download the scripts](https://gallery.technet.microsoft.com/scriptcenter/Azure-Key-Vault-Powershell-1349b091) and unblock the "Azure Key Vault Powershell scripts.zip" file by right-clicking it, **Properties**, **Unblock**. Then extract the zip file to a local folder on your computer.
+
+Before you load the script module into your Azure PowerShell session, set the execution policy:
+
+			Set-ExecutionPolicy RemoteSigned -Scope Process
+
+Then load the script module into your Azure PowerShell session. For example, if you extracted the scripts to a folder named C:\KeyVaultScripts, type:
+
+			import-module C:\KeyVaultScripts\KeyVaultManager
+
+The Key Vault cmdlets and scripts require Azure Resource Manager, so type the following to switch to Azure Resource Manager mode:
+
+	Switch-AzureMode AzureResourceManager
+
+	New-AzureKeyVault -VaultName 'ScampKeyVault' -ResourceGroupName 'ScampResourceGroup' -Location 'North Europe'
+
+- **VaultName** will be the **KeyVault:Url** that you will use later in the debugSettings.json file.
+- ResourceGroupName is the Resource Group Name in Azure.
+- Location parameter, use the command [Get-AzureLocation](https://msdn.microsoft.com/library/azure/dn654582.aspx). If you need more information, type: `Get-Help Get-AzureLocation`
+
+Applications that use a key vault must authenticate and has permission granted.
+
+1. Sign in to the Azure Management Portal.
+2. On the left, click **Active Directory**, and then select the directory you have used previously.
+3. On the Quick Start page, click Applications then your app and finally click **CONFIGURE**.
+4. Scroll to the **keys** section, select the duration, and then click **SAVE**. The page refreshes and now shows a key value. This value will be **KeyVault:AuthClientSecret** in the config.
+5. Copy the client ID value from this page. This value will be  **KeyVault:AuthClientId** in the config.
+
+### Step 5:  Enable the OAuth2 implicit grant for your application
 
 By default, applications provisioned in Azure AD are not enabled to use the OAuth2 implicit grant. In order to run this sample, you need to explicitly opt in.
 
@@ -41,7 +89,7 @@ By default, applications provisioned in Azure AD are not enabled to use the OAut
 3. Open the manifest file with a text editor. Search for the `oauth2AllowImplicitFlow` property. You will find that it is set to `false`; change it to `true` and save the file.
 4. Using the Manage Manifest button, upload the updated manifest file. Save the configuration of the app.
 
-### Step 5:  Configure the Scamp Application to use your Azure Active Directory tenant
+### Step 6:  Configure the Scamp Application to use your Azure Active Directory tenant
 
 1. TODO:
 2. Open the solution in Visual Studio 2015 CTP 6
@@ -65,7 +113,10 @@ By default, applications provisioned in Azure AD are not enabled to use the OAut
                 "APPSETTING_DocDb:databaseName": "scamp",
                 "APPSETTING_DocDb:collectionName": "scampdata",
                 "APPSETTING_DocDb:connectionMode" : "http|tcp",
-                "APPSETTING_Provisioning:StorageConnectionString": "<storage connection string>"
+                "APPSETTING_Provisioning:StorageConnectionString": "<storage connection string>",
+		"APPSETTING_KeyVault:Url": "https://{name}.vault.azure.net/",
+        	"APPSETTING_KeyVault:AuthClientId": "{Active Directory Client ID}",
+        	"APPSETTING_KeyVault:AuthClientSecret": "{Active directory secret}"
             }
         }
     ]
@@ -103,9 +154,12 @@ In your Package Manager Console, before you debug - add $env variabiels.
     PM> $env:APPSETTING_DocDb:collectionName = "<collection name>"
     PM> $env:APPSETTING_DocDb:connectionMode = "http|tcp"
     PM> $env:APPSETTING_Provisioning:StorageConnectionString = "<azure storage account connection string>"
+		PM> $env:APPSETTING_KeyVault:Url = "https://{name}.vault.azure.net/"
+		PM> $env:APPSETTING_KeyVault:AuthClientId = "{Active Directory Client ID}"
+		PM> $env:APPSETTING_KeyVault:AuthClientSecret = "{Active directory secret}"
 
 Or, these can be set also from Project Properties -> Debug -> Environment Variables to set.
-This format is used as this is what AZW uses for Environment variables. 
+This format is used as this is what AZW uses for Environment variables.
 
 
 ````
@@ -118,6 +172,9 @@ APPSETTING_DocDb:databaseName
 APPSETTING_DocDb:collectionName
 APPSETTING_DocDb:connectionMode
 APPSETTING_Provisioning:StorageConnectionString
+APPSETTING_KeyVault:Url
+APPSETTING_KeyVault:AuthClientId
+APPSETTING_KeyVault:AuthClientSecret
 ````
 
 ### Settings For Site ###
@@ -130,7 +187,9 @@ APPSETTING_Provisioning:StorageConnectionString
 - **DocDb:collectionName** this is '**scampdata**' by default the Scamp code will create this if it doesn't exist already.
 - **DocDb:connectionMode** specify http for HTTP Mode, or tcp for direct connection to DocumentDB. tcp is recommended if firewalls/proxies allow it. http is likely simplest for local dev
 - **Provisioning:StorageConnectionString** this is an Azure Storage Account connection string in the format of:
-
+- **KeyVault:Url** this is the full url of the KeyVault repository (eg.https://scampkeyvault.vault.azure.net/)
+- **KeyVault:AuthClientId** this is the client id of the Azure AD that is accessing keyvault
+- **KeyVault:AuthClientSecret** this is the secret of the Azure AD app that is accessing keyvault
 ```
 "DefaultEndpointsProtocol=https;AccountName=[AccountName];AccountKey=[AccountKey]"
 ```

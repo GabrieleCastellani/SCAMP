@@ -34,13 +34,15 @@ namespace ScampApi.Controllers.Controllers
             // fetch user from database
             tmpUser = await _securityHelper.GetUser();
 
-            //TODO: we're going to need this for authorizing requests, so we should probably cache it
-            //return object for user...
-            
-            return new User
-            {
-                Id = tmpUser.Id,
-                Name = tmpUser.Name,
+			//TODO: we're going to need this for authorizing requests, so we should probably cache it
+			//return object for user...
+
+			return new User
+			{
+				Id = tmpUser.Id,
+				Name = tmpUser.Name,
+				isSystemAdmin = tmpUser.isSystemAdmin,
+				email = tmpUser.email
             };
         }
 

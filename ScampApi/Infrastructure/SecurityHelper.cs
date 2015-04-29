@@ -32,8 +32,8 @@ namespace ScampApi.Infrastructure
         public async Task<ScampUser> GetUser()
         {
             //TODO ADD Some cache
-            var IPID = GetIPIDByContext();
-            return await GetUserByIPID(IPID);
+            var userId = GetIPIDByContext();
+            return await GetUserById(userId);
         }
 
         public string GetIPIDByContext()
@@ -42,25 +42,28 @@ namespace ScampApi.Infrastructure
             string tenantID = Context.User.Claims.FirstOrDefault(c => c.Type.Contains("tenantid")).Value;
             string objectID = Context.User.Claims.FirstOrDefault(c => c.Type.Contains("objectidentifier")).Value;
             // create SCAMP UserID
-            string IPID = string.Format("{0}:{1}", tenantID, objectID);
+            string IPID = string.Format("{0}-{1}", tenantID, objectID);
             return IPID;
         }
-        public async Task<ScampUser> GetUserByIPID(string IPID)
+
+        public async Task<ScampUser> GetUserById(string userId)
         {
-            var tmpUser = await _userRepository.GetUserByIPID(IPID);
+            var tmpUser = await _userRepository.GetUserbyId(userId);
             if (tmpUser == null) // insert if user doesn't exist
             {
                 // build user object
                 tmpUser = new ScampUser()
                 {
-                    Id = Guid.NewGuid().ToString(),
+                    Id = userId,
                     Name =
                         string.Format("{0} {1}", Context.User.FindFirst(ClaimTypes.GivenName).Value,
                             Context.User.FindFirst(ClaimTypes.Surname).Value).Trim(),
-                    email = Context.User.Claims.FirstOrDefault(c => c.Type.Contains("email") || c.Type.Contains("upn")).Value,
-                    IPKey = IPID,
-                    IsSystemAdmin = true // temporary value
+					//isSystemAdmin = tmpUser.isSystemAdmin,
+					isSystemAdmin = true,
+					// get email address
+					email = Context.User.Claims.FirstOrDefault(c => c.Type.Contains("email") || c.Type.Contains("upn")).Value
                 };
+
                 // insert into database   
                 await _userRepository.CreateUser(tmpUser);
             }
@@ -73,11 +76,12 @@ namespace ScampApi.Infrastructure
             var checkAdmin = grp.Admins.ToList().Any(q => q.Id == user.Id);
             return checkAdmin;
         }
+
         public async Task<bool> IsSysAdmin()
         {
-            var user = await GetUser();
-            if (user.IsSystemAdmin) return true;
-            return false;
+            ScampUser user = await GetUser();
+
+            return user.isSystemAdmin;
         }
     }
 }
