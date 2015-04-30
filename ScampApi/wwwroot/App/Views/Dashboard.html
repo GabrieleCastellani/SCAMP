@@ -128,15 +128,20 @@
 						<div class="col-md-7">ID</div>
 						<div class="col-md-5">Name</div>
 					</div>
-					<div class="col-md-12" infinite-scroll='usersNextPage()' infinite-scroll-distance='1'>
+					<!-- Users list - dynamically loaded-->
+					<users></users>
+					<!-- OR -- 
+						<div users></div>
+					-->
+					<!--<div class="col-md-12" infinite-scroll='usersNextPage()' infinite-scroll-distance='1'>
 						<div ng-repeat="user in userList">
 							<div class="col-md-7">{{user.userId}}</div>
 							<div class="col-md-5">{{user.name}}</div>
 						</div>
-					</div>
-					<div class="col-md-12">
+					</div>-->
+					<!--<div class="col-md-12">
 						<a href="" ng-click="usersNextPage()" ng-hide="allUsersLoaded">More</a>
-					</div>
+					</div>-->
 				</div>
 			</div>
 		</div>

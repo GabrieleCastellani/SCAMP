@@ -38,8 +38,15 @@ angular.module('scamp')
 				group: function () {
 					return groupsSvc.getItem(groupId);
 				},
-				users: function () {
-					return $scope.userList;
+				//users: function () {
+				//	var usrs = [];
+				//	dashboardSvc.getItems().success(function (result) {
+				//		usrs = result;
+				//	});
+				//	return usrs;
+				//},
+				dashboardSvc: function() {
+					return dashboardSvc;
 				},
 				currentUser: function () {
 					return $scope.userProfile;
@@ -54,32 +61,41 @@ angular.module('scamp')
 	//	$scope.userSvc.continuationToken = results.item2;
 	//})
 
-	$scope.usersNextPage = function () {
-		if (usersPaginationSvc.finish)
-			return;
 
-		usersPaginationSvc.nextPage(usersPaginationSvc.continuationToken).success(function (results) {
-			if (!$scope.userList) // first time
-				$scope.userList = results.item1;
-			else
-				$scope.userList = $scope.userList.concat(results.item1);
+	/**************************************
+	*** MOVED TO USERSPAGINATIONCTRL.JS ***
+	***************************************/
 
-			if (results.item2 == null) { // all users loaded
-				usersPaginationSvc.finish = true;
-				usersPaginationSvc.continuationToken = results.item2;
-			}
-			else {
-				usersPaginationSvc.finish = false;
-				usersPaginationSvc.continuationToken = results.item2;
-			}
+	//$scope.usersNextPage = function () {
+	//	if (usersPaginationSvc.finish)
+	//		return;
 
-			$scope.allUsersLoaded = usersPaginationSvc.finish;
-		});
+	//	usersPaginationSvc.nextPage(usersPaginationSvc.continuationToken).success(function (results) {
+	//		if (!$scope.userList) // first time
+	//			$scope.userList = results.item1;
+	//		else
+	//			$scope.userList = $scope.userList.concat(results.item1);
 
-	}
-	$scope.allUsersLoaded = usersPaginationSvc.finish;
+	//		if (results.item2 == null) { // all users loaded
+	//			usersPaginationSvc.finish = true;
+	//			usersPaginationSvc.continuationToken = results.item2;
+	//		}
+	//		else {
+	//			usersPaginationSvc.finish = false;
+	//			usersPaginationSvc.continuationToken = results.item2;
+	//		}
+
+	//		$scope.allUsersLoaded = usersPaginationSvc.finish;
+	//	});
+
+	//}
+	//$scope.allUsersLoaded = usersPaginationSvc.finish;
 }])
-.controller('GroupUsersModalCtrl', function ($scope, $modalInstance, groupSvc, group, users, currentUser) {
+.controller('GroupUsersModalCtrl', function ($scope, $modalInstance, groupSvc, dashboardSvc, group, currentUser) {
+	$scope.users = [];
+	dashboardSvc.getItems().success(function (result) {
+		$scope.users = result;
+	});
 
 	$scope.group = group.data;
 
@@ -87,8 +103,6 @@ angular.module('scamp')
 
 	$scope.currentUser = currentUser;
 
-	// TODO: load only if it's necessary
-	$scope.users = users;
 	$scope.done = function () {
 		$modalInstance.dismiss('done');
 	};

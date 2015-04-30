@@ -66,6 +66,8 @@ namespace ScampApi.Controllers.Controllers
 		[HttpGet("next/{contToken}", Name = "Users.Next")]
 		public async Task<Tuple<IEnumerable<UserSummary>, string>> GetNext(string contToken)
 		{
+			if (contToken == null)
+				contToken = "";
 			Tuple<IEnumerable<ScampUser>, string> result = await _userRepository.GetUsers(3, Uri.UnescapeDataString(contToken));
 
 			string encoded = null;
